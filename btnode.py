@@ -41,7 +41,7 @@ class BTNode(object):
 	### current: the current child (index integer)
 	### agent: the executing agent
 	### first: is this the first time it is executed?
-	
+
 	def __init__(self, agent, args = []):
 		self.id = gensym()
 		self.agent = agent
@@ -126,7 +126,12 @@ class Sequence(BTNode):
 	def execute(self, delta = 0):
 		BTNode.execute(self, delta)
 		### YOUR CODE GOES BELOW HERE ###
-
+		for child in self.children:
+			result = child.execute(delta)
+			if result is False:  # If any child fails, the sequence fails
+				return False
+			elif result is None:  # If a child requires more ticks, continue on next tick
+				return None
 		### YOUR CODE GOES ABOVE HERE ###
 		return True
 
@@ -145,7 +150,19 @@ class Selector(BTNode):
 	def execute(self, delta = 0):
 		BTNode.execute(self, delta)
 		### YOUR CODE GOES BELOW HERE ###
+		# for child in self.children[self.current:]:
+		# 	result = child.execute(delta)
+		# 	if result:
+		# 		return True
+		# 	elif result is None:
+		# 		return None
 
+		for child in self.children:
+			result = child.execute(delta)
+			if result is True:  # If any child succeeds, the selector succeeds
+				return True
+			elif result is None:  # If a child requires more ticks, continue on next tick
+				return None
 		### YOUR CODE GOES ABOVE HERE ###
 		return False
 
