@@ -126,12 +126,40 @@ class Sequence(BTNode):
 	def execute(self, delta = 0):
 		BTNode.execute(self, delta)
 		### YOUR CODE GOES BELOW HERE ###
-		for child in self.children:
-			result = child.execute(delta)
-			if result is False:  # If any child fails, the sequence fails
-				return False
-			elif result is None:  # If a child requires more ticks, continue on next tick
-				return None
+
+
+
+		# for child in self.children:
+		# 	result = child.execute(delta)
+		# 	if result is False:  # If any child fails, the sequence fails
+		# 		return False
+		# 	elif result is None:  # If a child requires more ticks, continue on next tick
+		# 		return None
+			
+
+		## base case if there is no children
+		if self.getNumChildren() == 0:
+			return True
+
+		curr = self.getCurrentIndex()
+		if curr < self.getNumChildren(): ## valid index of children
+			childRun = self.getChild(curr).execute(delta)
+			if(childRun == False):
+				#child succeeded
+				self.reset()
+				return False 
+			elif(childRun == None):
+				return None # still executing 
+			else:
+				self.setCurrentIndex(curr + 1)
+				return None 
+			
+		else:
+			# all kids failed
+			self.reset()
+
+
+
 		### YOUR CODE GOES ABOVE HERE ###
 		return True
 
@@ -157,12 +185,33 @@ class Selector(BTNode):
 		# 	elif result is None:
 		# 		return None
 
-		for child in self.children:
-			result = child.execute(delta)
-			if result is True:  # If any child succeeds, the selector succeeds
-				return True
-			elif result is None:  # If a child requires more ticks, continue on next tick
-				return None
+		# for child in self.children:
+		# 	result = child.execute(delta)
+		# 	if result is True:  # If any child succeeds, the selector succeeds
+		# 		return True
+		# 	elif result is None:  # If a child requires more ticks, continue on next tick
+		# 		return None
+
+		## base case if there is no children
+		if self.getNumChildren() == 0:
+			return False
+
+		curr = self.getCurrentIndex()
+		if curr < self.getNumChildren(): ## valid index of children
+			childRun = self.getChild(curr).execute(delta)
+			if(childRun == True):
+				#child succeeded
+				self.reset()
+				return True 
+			elif(childRun == None):
+				return None # still executing 
+			else:
+				self.setCurrentIndex(curr + 1)
+				return None 
+			
+		else:
+			# all kids failed
+			self.reset()
 		### YOUR CODE GOES ABOVE HERE ###
 		return False
 
