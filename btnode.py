@@ -96,6 +96,7 @@ class BTNode(object):
 		return self.agent
 
 	def getChild(self, index):
+		print(self.children[index])
 		return self.children[index]
 
 	def getChildren(self):
@@ -128,15 +129,6 @@ class Sequence(BTNode):
 		### YOUR CODE GOES BELOW HERE ###
 
 
-
-		# for child in self.children:
-		# 	result = child.execute(delta)
-		# 	if result is False:  # If any child fails, the sequence fails
-		# 		return False
-		# 	elif result is None:  # If a child requires more ticks, continue on next tick
-		# 		return None
-			
-
 		## base case if there is no children
 		if self.getNumChildren() == 0:
 			return True
@@ -158,8 +150,6 @@ class Sequence(BTNode):
 			# all kids failed
 			self.reset()
 
-
-
 		### YOUR CODE GOES ABOVE HERE ###
 		return True
 
@@ -177,20 +167,6 @@ class Selector(BTNode):
 	### If a selector node has no children, it fails.
 	def execute(self, delta = 0):
 		BTNode.execute(self, delta)
-		### YOUR CODE GOES BELOW HERE ###
-		# for child in self.children[self.current:]:
-		# 	result = child.execute(delta)
-		# 	if result:
-		# 		return True
-		# 	elif result is None:
-		# 		return None
-
-		# for child in self.children:
-		# 	result = child.execute(delta)
-		# 	if result is True:  # If any child succeeds, the selector succeeds
-		# 		return True
-		# 	elif result is None:  # If a child requires more ticks, continue on next tick
-		# 		return None
 
 		## base case if there is no children
 		if self.getNumChildren() == 0:
@@ -210,6 +186,7 @@ class Selector(BTNode):
 				return None 
 			
 		else:
+			print("Selector Node Index out of bounds")
 			# all kids failed
 			self.reset()
 		### YOUR CODE GOES ABOVE HERE ###
