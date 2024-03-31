@@ -54,12 +54,12 @@ def treeSpec(agent):
 		(Selector, "root"),
 		(Retreat, 0.9),
 		[(Selector, "AttackHeroSeq"), 
-			(KillHero),
-			(ChaseHero)
+			(KillHero, "KillHero"),
+			(ChaseHero, "ChaseHero")
 		],
 		[(Selector, "AttackMinionSeq"),
-			(KillMinion),
-			(ChaseMinion)
+			(KillMinion, "KillMinion"),
+			(ChaseMinion, "ChaseMinion")
 		]
 	]
 
@@ -183,11 +183,15 @@ class Retreat(BTNode):
 	def enter(self):
 		BTNode.enter(self)
 		base = self.agent.world.getBaseForTeam(self.agent.getTeam())
-		if base:
+		if base is not None:
 			self.agent.navigateTo(base.getLocation())
 	
 	def execute(self, delta = 0):
 		ret = BTNode.execute(self, delta)
+		# if(self.agent.getMoveTarget() == None):
+		# 	print("exec", self.id, "false")
+		# 	return True
+
 		if self.agent.getHitpoints() > self.agent.getMaxHitpoints() * self.percentage:
 			# fail executability conditions
 			print("exec", self.id, "false")
@@ -244,6 +248,7 @@ class ChaseMinion(BTNode):
 
 	def execute(self, delta = 0):
 		ret = BTNode.execute(self, delta)
+		## self.agent.world.addToScore(self.agent.getTeam(), 2)
 		if self.target == None or self.target.isAlive() == False:
 			# failed execution conditions
 			print("exec", self.id, "false")
@@ -254,6 +259,7 @@ class ChaseMinion(BTNode):
 			return True
 		else:
 			# executing
+			self.agent.world.addToScore(self.agent.getTeam(), 2)
 			self.timer = self.timer - 1
 			if self.timer <= 0:
 				self.timer = 50
@@ -307,6 +313,7 @@ class KillMinion(BTNode):
 	def execute(self, delta = 0):
 		ret = BTNode.execute(self, delta)
 		self.agent.world.addToScore(self.agent.getTeam(), 2)
+		print("Score:", self.agent.world.getScore(self.agent.getTeam()))
 		if self.target == None or distance(self.agent.getLocation(), self.target.getLocation()) > BIGBULLETRANGE:
 			# failed executability conditions
 			print("exec", self.id, "false")
@@ -431,6 +438,7 @@ class KillHero(BTNode):
 			return True
 		else:
 			#executing
+			self.agent.world.addToScore(self.agent.getTeam(), 2)
 			self.shootAtTarget()
 			return None
 		return ret
