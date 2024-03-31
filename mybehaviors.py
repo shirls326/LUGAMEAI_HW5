@@ -30,9 +30,72 @@ from btnode import *
 
 
 def treeSpec(agent):
+	"""
+	Constructs and returns a behavior tree specification for the given agent.
+
+	Parameters:
+	- agent: The agent for which the behavior tree specification is being constructed.
+
+	Returns:
+	- spec: The behavior tree specification as a list of dictionaries.
+
+	The behavior tree specification is a hierarchical structure that defines the agent's behavior.
+	It consists of various nodes such as selectors, sequences, and custom nodes.
+	The structure of the behavior tree is as follows:
+
+	- Root Selector:
+		- Attack Sequence:
+			- HitpointDaemon node
+			- BuffDaemon node
+			- Attack Selector:
+				- ChaseHero node
+				- ChaseMinion node
+		- Retreat Sequence:
+			- HitpointDaemon node
+			- Retreat node
+
+	Each node in the behavior tree is represented as a dictionary with the following keys:
+	- 'node_type': The type of the node (e.g., 'Selector', 'Sequence').
+	- 'agent': The agent object associated with the node.
+	- 'name': The name of the node.
+	- 'children': The child nodes of the current node.
+
+	The behavior tree specification is constructed by creating these dictionaries and organizing them
+	in a hierarchical manner to represent the desired behavior of the agent.
+
+	Example usage:
+	```
+	spec = treeSpec(agent)
+	```
+
+	Note: This method assumes the existence of the `makeNode` function, which is used to create custom nodes.
+	"""
 	myid = str(agent.getTeam())
 	spec = None
 	### YOUR CODE GOES BELOW HERE ###
+	spec = [
+		(Selector, "root"),
+			[(Selector, "attackTree"),
+				[(Sequence, "attackSequenceHero"), ## Attack HERO 
+	 				(HitpointDaemon,0.3, "hitpointDaemon"),
+						[(BuffDaemon, 5, "buffDaemon"),
+							[(Sequence, "attack"),
+							[(ChaseHero, "chaseHero"),
+							(KillHero, "killHero")]]
+							]
+				],
+				[(Sequence, "attackSequenceMinion"), ## Attack MINION
+					(HitpointDaemon, 0.5,"hitpointDaemon"),
+						[(Sequence, "attackT"),
+						[(ChaseMinion, "chaseMinion"),
+						(KillMinion, "killMinion")]]	
+				],
+			],
+			[(Sequence, "RetreatTree"),
+				[(HitpointDaemon, 0.5,"hitpointDaemon"),
+				[(Retreat, 0.5,"retreat")]]
+			]
+	]
 
 	### YOUR CODE GOES ABOVE HERE ###
 	return spec
@@ -40,9 +103,9 @@ def treeSpec(agent):
 def myBuildTree(agent):
 	myid = str(agent.getTeam())
 	root = None
+
 	### YOUR CODE GOES BELOW HERE ###
 	
-	### YOUR CODE GOES ABOVE HERE ###
 	return root
 
 ### Helper function for making BTNodes (and sub-classes of BTNodes).
@@ -488,4 +551,6 @@ class BuffDaemon(BTNode):
 
 #################################
 ### MY CUSTOM BEHAVIOR CLASSES
+	
+	
 
